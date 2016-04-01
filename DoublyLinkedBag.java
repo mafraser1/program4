@@ -1,26 +1,26 @@
-
+/*Author: Maxwell Fraser
+Doubly Linked bag and node classes
+ */
 public class DoublyLinkedBag<T> implements BagInterface<T> {
 
     private int size;
     private DoublyLinkedNode first;
 
+    //Node holds data, and the node ahead and behind it
     private class DoublyLinkedNode {
 
         private T data;
         private DoublyLinkedNode next;
         private DoublyLinkedNode prev;
 
+        //creates the node with data, next and prev node managment handled by bag
         private DoublyLinkedNode(T input) {
             data = input;
             next = null;
             prev = null;
         }
 
-        private DoublyLinkedNode(T input, DoublyLinkedNode prevNode) {
-            data = input;
-            prev = prevNode;
-        }
-
+        //can use to clear out a node when needed
         private void clear() {
             data = null;
             next = null;
@@ -33,6 +33,7 @@ public class DoublyLinkedBag<T> implements BagInterface<T> {
      *
      * @return The integer number of entries currently in the bag.
      */
+    //returns size
     public int getCurrentSize() {
         return size;
     }
@@ -42,6 +43,7 @@ public class DoublyLinkedBag<T> implements BagInterface<T> {
      *
      * @return True if the bag is empty, or false if not.
      */
+    //checks to see if the bag in empty
     public boolean isEmpty() {
         if (size == 0) {
             return true;
@@ -56,17 +58,18 @@ public class DoublyLinkedBag<T> implements BagInterface<T> {
      * @param newEntry The object to be added as a new entry.
      * @return True if the addition is successful, or false if not.
      */
+    //checks to see if the bag is empty first
+    //if empty then it sets the new entry as the first in the list
+    //otherwise it sets the new enry as the first and pushes the rest of the nodes behid it
     public boolean add(T newEntry) {
-        DoublyLinkedNode current;
-        current = first;
-        while (current.next != null) {
-            current = current.next;
-            //makes a new node that references the last node as the previous
-            //then sets was the last node to reference the new node as the next node
-
+        DoublyLinkedNode newN = new DoublyLinkedNode(newEntry);
+        if (this.isEmpty()) {
+            first = newN;
+        } else {
+            first.prev = newN;
+            newN.next = first;
+            first = newN;
         }
-        DoublyLinkedNode newN = new DoublyLinkedNode(newEntry, current);
-        current.next = newN;
         size++;
         return true;
     }
@@ -77,6 +80,8 @@ public class DoublyLinkedBag<T> implements BagInterface<T> {
      * @return Either the removed entry, if the removal. was successful, or
      * null.
      */
+    //removes the first entry from the bag
+    //tells what item was reoved
     public T remove() {
         T removedItem = first.data;
         first.data = null;
@@ -93,9 +98,13 @@ public class DoublyLinkedBag<T> implements BagInterface<T> {
      * @param anEntry The entry to be removed.
      * @return True if the removal was successful, or false if not.
      */
+    //searches for an entry and removes it
     public boolean remove(T anEntry) {
         boolean didRemove = false;
         DoublyLinkedNode current = first;
+        //while next node is not null it continues searching until the last node
+        //it also will stop if it removes an entry
+        //removes the entry upon match with the parameter
         while (current.next != null && !didRemove) {
             if (current.data == anEntry) {
                 current.prev.next = current.next;
@@ -107,14 +116,15 @@ public class DoublyLinkedBag<T> implements BagInterface<T> {
         }
         return didRemove;
     }
-    
+
     {
-        
+
     }
 
     /**
      * Removes all entries from this bag.
      */
+    //clears the entire bag
     public void clear() {
         while (size > 0) {
             this.remove();
@@ -128,6 +138,7 @@ public class DoublyLinkedBag<T> implements BagInterface<T> {
      * @param anEntry The entry to be counted.
      * @return The number of times anEntry appears in the bag.
      */
+    //checks for the frequency of an Entry by traversing from the first node
     public int getFrequencyOf(T anEntry) {
         int count = 0;
         DoublyLinkedNode current = first;
@@ -146,11 +157,12 @@ public class DoublyLinkedBag<T> implements BagInterface<T> {
      * @param anEntry The entry to locate.
      * @return True if the bag contains anEntry, or false if not.
      */
+    //checks to see if it contains a specific entry, returns true if so
     public boolean contains(T anEntry) {
         boolean doesContain = false;
         DoublyLinkedNode current = first;
         while (current.next != null && !doesContain) {
-            if (anEntry == current.data) {
+            if (anEntry.equals(current.data)) {
                 doesContain = true;
             }
             current = current.next;
@@ -164,8 +176,11 @@ public class DoublyLinkedBag<T> implements BagInterface<T> {
      * @return A newly allocated array of all the entries in the bag. Note: If
      * the bag is empty, the returned array is empty.
      */
+    //returns an array of the bag by copying data to an array the same size of the bag
+    //traverses from the first node and sets the array at index 0 to that entry
+    //continues by one from that point
     public T[] toArray() {
-        T[] convertArray = (T[])new Object[size];
+        T[] convertArray = (T[]) new Object[size];
         DoublyLinkedNode current = this.first;
         for (int i = 0; i < size; i++) {
             convertArray[i] = current.data;
